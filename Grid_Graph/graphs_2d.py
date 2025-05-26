@@ -3,6 +3,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import itertools
 import random
+import time
 
 # Help functions
 
@@ -97,3 +98,34 @@ def overlay_subset(G, nodes):
     nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color='orange')
     
     plt.show()
+
+# Measures the time it takes to run a function with given arguments.
+def measure_runtime(func, *args, **kwargs):
+    start_time = time.time()
+    result = func(*args, **kwargs)
+    end_time = time.time()
+    elapsed = end_time - start_time
+    return result, elapsed
+
+'''
+# Example usage:
+if __name__ == "__main__":
+    G = generate_2D_grid_graph(10, 10)
+    nodes = list(G.nodes())[:10]
+    result, runtime = measure_runtime(is_connected_subgraph, G, nodes)
+    print(f"Is connected: {result}, Time taken: {runtime:.6f} seconds")
+'''
+
+def measure_runtime_greedy(select, dset, G, trials=100):
+    start_time = time.time()
+    sizes = []
+    for _ in range(trials):
+        sizes.append(len(dset(G, select(G))))
+    end_time = time.time()
+    elapsed_time = (end_time - start_time)/trials
+    return np.mean(sizes), elapsed_time, sizes
+
+def print_runtime_greedy(name, select, dset, G, trials=100):
+    mean_size, elapsed_time, sizes = measure_runtime_greedy(select, dset, G, trials)
+    print(f"Mean size of {name}: {mean_size:.2f}, Time taken: {elapsed_time:.6f} seconds")
+    return sizes
