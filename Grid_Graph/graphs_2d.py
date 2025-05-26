@@ -82,3 +82,18 @@ def select_starting_node_max_neighbors(G):
     max_degree = max(G.degree(n) for n in G.nodes())
     candidates = [n for n in G.nodes() if G.degree(n) == max_degree]
     return random.choice(candidates)
+
+# Overlays a subset of nodes on the graph for visualization.
+def overlay_subset(G, nodes):
+    print(nodes)
+    pos = {(x,y):(y,-x) for x,y in G.nodes()}
+    plt.figure(figsize=(6,6))
+    nx.draw(G, pos=pos, 
+            node_color='lightgreen', 
+            with_labels=True,
+            node_size=600)
+    
+    # Highlight the dominating set
+    nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color='orange')
+    
+    plt.show()
