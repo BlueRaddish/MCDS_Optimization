@@ -99,22 +99,29 @@ def overlay_subset(G, nodes):
     
     plt.show()
 
-# Measures the time it takes to run a function with given arguments.
-def measure_runtime(func, *args, **kwargs):
+# Measures the time it takes to run a function with given arguments, repeated for a number of trials.
+def measure_runtime(func, trials=1, *args, **kwargs):
     start_time = time.time()
-    result = func(*args, **kwargs)
+    result = None
+    for _ in range(trials):
+        result = func(*args, **kwargs)
     end_time = time.time()
-    elapsed = end_time - start_time
+    elapsed = (end_time - start_time) / trials
     return result, elapsed
 
 '''
-# Example usage:
+#Example usage:
 if __name__ == "__main__":
-    G = generate_2D_grid_graph(10, 10)
-    nodes = list(G.nodes())[:10]
-    result, runtime = measure_runtime(is_connected_subgraph, G, nodes)
-    print(f"Is connected: {result}, Time taken: {runtime:.6f} seconds")
-'''
+    # Create a 5x5 grid graph
+    G = generate_2D_grid_graph(5, 5)
+    # Example function to measure: get neighbors of a node
+    def get_neighbors(G, node):
+        return adjacent_8(G, node)
+    node = (2, 2)
+    result, avg_time = measure_runtime(get_neighbors, G, node, trials=1000)
+    print(f"Neighbors of {node}: {result}")
+    print(f"Average runtime over 1000 trials: {avg_time:.8f} seconds")
+''' 
 
 def measure_runtime_greedy(select, dset, G, trials=100):
     start_time = time.time()
