@@ -129,3 +129,13 @@ def print_runtime_greedy(name, select, dset, G, trials=100):
     mean_size, elapsed_time, sizes = measure_runtime_greedy(select, dset, G, trials)
     print(f"Mean size of {name}: {mean_size:.2f}, Time taken: {elapsed_time:.6f} seconds")
     return sizes
+
+def get_minimum_from_trials(select, dset, G, trials=100):
+    min_len = float('inf')
+    min_set = None
+    for _ in range(trials):
+        dom_set = dset(G, select(G))
+        if len(dom_set) < min_len:
+            min_len = len(dom_set)
+            min_set = dom_set
+    return min_set, min_len
