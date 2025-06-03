@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import itertools
 import random
 import time
+from tqdm import tqdm
 
 # Help functions
 
@@ -99,44 +100,18 @@ def overlay_subset(G, nodes):
     
     plt.show()
 
-# Measures the time it takes to run a function with given arguments, repeated for a number of trials.
-def measure_runtime(func, trials=1, *args, **kwargs):
+# Measures the time it takes to run a function with given arguments, with a progress bar.
+def measure_runtime(func, *args, trials=1, **kwargs):
     start_time = time.time()
-    result = None
-    for _ in range(trials):
+    results = []
+    for _ in tqdm(range(trials), desc="Running trials"):
         result = func(*args, **kwargs)
+        results.append(result)
     end_time = time.time()
-    elapsed = (end_time - start_time) / trials
-    return result, elapsed
+    elapsed_time = (end_time - start_time) / trials
+    return results, elapsed_time
 
-'''
-#Example usage:
-if __name__ == "__main__":
-    # Create a 5x5 grid graph
-    G = generate_2D_grid_graph(5, 5)
-    # Example function to measure: get neighbors of a node
-    def get_neighbors(G, node):
-        return adjacent_8(G, node)
-    node = (2, 2)
-    result, avg_time = measure_runtime(get_neighbors, G, node, trials=1000)
-    print(f"Neighbors of {node}: {result}")
-    print(f"Average runtime over 1000 trials: {avg_time:.8f} seconds")
-''' 
-
-def measure_runtime_greedy(select, dset, G, trials=100):
-    start_time = time.time()
-    sizes = []
-    for _ in range(trials):
-        sizes.append(len(dset(G, select(G))))
-    end_time = time.time()
-    elapsed_time = (end_time - start_time)/trials
-    return np.mean(sizes), elapsed_time, sizes
-
-def print_runtime_greedy(name, select, dset, G, trials=100):
-    mean_size, elapsed_time, sizes = measure_runtime_greedy(select, dset, G, trials)
-    print(f"Mean size of {name}: {mean_size:.2f}, Time taken: {elapsed_time:.6f} seconds")
-    return sizes
-
+# Returns a minimum dominating set from trials, using a selection function and dataset.
 def get_minimum_from_trials(select, dset, G, trials=100):
     min_len = float('inf')
     min_set = None
