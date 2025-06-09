@@ -154,7 +154,7 @@ def get_minimum_from_trials(select, dset, G, trials=100):
     min_len = float('inf')
     min_set = None
     for _ in range(trials):
-        dom_set = dset(G, select(G))
+        dom_set = dset(G, select)
         if len(dom_set) < min_len:
             min_len = len(dom_set)
             min_set = dom_set
