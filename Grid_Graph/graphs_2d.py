@@ -51,19 +51,30 @@ def generate_random_graph_with_avg_degree(nodes, neighbors):
     return G
 
 # --- Visualization Tools ---
-def plot_graph(graph, pos=None):
-    """Plot a 2D grid graph using matplotlib."""
+def plot_graph(graph, type=None, pos=None):
+    """Plot a graph using matplotlib."""
     plt.figure(figsize=(6,6))
-    pos = {(x,y):(y,-x) for x,y in graph.nodes()}
-    nx.draw(graph, pos=pos, 
-            node_color='lightgreen', 
+    if type is None:
+        pos = nx.spring_layout(graph)
+    elif type == 'grid':
+        pos = {(x, y): (y, -x) for x, y in graph.nodes()}
+    else:
+        raise ValueError(f"Undefined type: {type}")
+    nx.draw(graph, pos=pos,
+            node_color='lightgreen',
             with_labels=True,
             node_size=600)
+    plt.show()
 
-def overlay_subset(G, nodes):
-    """Plot a 2D grid graph and highlight a subset of nodes in orange."""
+def overlay_subset(G, nodes, type=None):
+    """Plot a graph and highlight a subset of nodes in orange."""
     print(nodes)
-    pos = {(x,y):(y,-x) for x,y in G.nodes()}
+    if type is None:
+        pos = nx.spring_layout(G)
+    elif type == 'grid':
+        pos = {(x, y): (y, -x) for x, y in G.nodes()}
+    else:
+        raise ValueError(f"Undefined type: {type}")
     plt.figure(figsize=(6,6))
     nx.draw(G, pos=pos, 
             node_color='lightgreen', 
