@@ -83,6 +83,35 @@ def overlay_subset(G, nodes, type=None):
     nx.draw_networkx_nodes(G, pos, nodelist=nodes, node_color='orange')
     plt.show()
 
+def run_method(G, method, *args, **kwargs):
+    """
+    Run a given method on the graph G with optional selection function.
+    If select is None, run the method directly; otherwise, use select to choose nodes.
+    """
+    return method(G, *args, **kwargs)
+
+def compare_boxplot(graph, methods=None, labels=None, num_trials=100, use_measure_runtime=True, figsize=(10, 6)):
+    """
+    Run each CDS method on the given graph for num_trials and plot a boxplot of CDS sizes.
+    methods: list of (function, selection_function or None) tuples
+    labels: list of labels for the boxplot
+    use_measure_runtime: if True, use measure_runtime; else, run methods directly in a loop
+    """
+    results = []
+    for method in methods:
+        if use_measure_runtime:
+            sets, _ = measure_runtime(run_method, graph, *method, trials = num_trials)
+        else:
+            sets, _ = run_method(graph, *method)
+        results.append([len(s) for s in sets])
+
+    plt.figure(figsize=figsize)
+    plt.boxplot(results, labels=labels)
+    plt.ylabel("CDS Size")
+    plt.title("Comparison of CDS Sizes Across Methods")
+    plt.xticks(rotation=15)
+    plt.show()
+
 # --- Adjacency Logic ---
 def adjacent_8(G, node):
     """Return the list of 8-way adjacent nodes for a given node in the grid."""
@@ -170,3 +199,4 @@ def get_minimum_from_trials(select, dset, G, trials=100):
             min_len = len(dom_set)
             min_set = dom_set
     return min_set, min_len
+
